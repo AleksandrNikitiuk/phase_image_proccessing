@@ -22,16 +22,24 @@ switch processType
     processTpg = DeletePhaseShifts(tpg);
   case 'sps' % удаление фазовых сдвигов и наклона поверхности
     processTpg = DeleteSlope(DeletePhaseShifts(tpg));
-   case 'pps' % удаление фазовых сдвигов и параболичности поверхности
+  case 'pps' % удаление фазовых сдвигов и параболичности поверхности
     processTpg = DeleteParabolic(DeletePhaseShifts(tpg));
+  case 'p5ps' % удаление фазовых сдвигов и поверхности 5 порядка
+    processTpg = DeletePolynomial5(DeletePhaseShifts(tpg));
   case 'psps' % удаление фазовых сдвигов, наклона поверхности и параболичности
     processTpg = DeleteParabolic(DeleteSlope(DeletePhaseShifts(tpg)));
+  case 'p5sps' % удаление фазовых сдвигов, наклона поверхности и поверхности 5 порядка
+    processTpg = DeletePolynomial5(DeleteSlope(DeletePhaseShifts(tpg)));
   case 'nps' % удаление фазовых сдвигов и шума у трек-диаграмм
     processTpg = DeleteNoise(DeletePhaseShifts(tpg));
   case 'bps' % удаление фазовых сдвигов и фона
     processTpg = DeleteBackground( DeletePhaseShifts(tpg) );
   case 'bsps' % удаление фазовых сдвигов, наклона поверхности и фона
     processTpg = DeleteBackground( DeleteSlope(DeletePhaseShifts(tpg)) );
+  case 'p5bps' % удаление фазовых сдвигов, поверхности 5 порядка и фона
+    processTpg = DeletePolynomial5( DeleteBackground(DeletePhaseShifts(tpg)) );
+  case 'bp5bps' % удаление фазовых сдвигов, поверхности 5 порядка и фона
+    processTpg = DeleteBackground( DeletePolynomial5( DeleteBackground(DeletePhaseShifts(tpg)) ) );
   case 'fsps'% удаление фазовых сдвигов, фона и сбойных точек
     processTpg = DeleteFailurePoints(DeleteSlope(DeletePhaseShifts(tpg)));
   otherwise
@@ -176,17 +184,40 @@ f = fit([xo,yo],zo, 'poly22');
 
 % ПОЛУЧЕНИЕ ПЛОСКОСТИ АППРОКСИМИРУЮЩЕЙ ИСХОДНЫЕ ДАННЫЕ
 
-col1 = f.p00 + f.p10 * (1:sizeTpg(2)) + f.p20 * (1:sizeTpg(2)).^2;
-mCol1 = repmat(col1,sizeTpg(1),1);
-row1 = f.p01 * (1:sizeTpg(1))' + f.p02 * (1:sizeTpg(1))'.^2;
-mRow1 = repmat(row1,1,sizeTpg(2));
-plane = mCol1 + mRow1 + f.p11 * (1:sizeTpg(1))' .* (1:sizeTpg(2));
+surface = feval(f,repmat(1:sizeTpg(2),sizeTpg(1),1),repmat(1:sizeTpg(1),sizeTpg(2),1)');
 
 % УДАЛЕНИЕ НАКЛОНА ИСХОДНОЙ ПОВЕРХНОСТИ
 
 tpgWithoutParabolic = zeros(sizeTpg);
-tpgWithoutParabolic = tpg - plane;
+tpgWithoutParabolic = tpg - surface;
 tpgWithoutParabolic = tpgWithoutParabolic + abs(min(min(tpgWithoutParabolic)));
+
+end
+
+%%
+% Эта функция предназначена для удаления поверхности пятого порядка.
+
+function [ tpgWithoutPolynomial5 ] = DeletePolynomial5( tpg )
+
+sizeTpg = size(tpg);
+
+% ОПРЕДЕЛЕНИЕ КОЭФФИЦИЕНТОВ ПЛОСКОСТИ АППРОКСИМИРУЮЩЕЙ ИСХОДНЫЕ ДАННЫЕ
+
+[xo,yo,zo] = prepareSurfaceData(1:sizeTpg(2),1:sizeTpg(1),tpg);
+f = fit([xo,yo],zo, 'poly55');
+
+% ПОЛУЧЕНИЕ ПЛОСКОСТИ АППРОКСИМИРУЮЩЕЙ ИСХОДНЫЕ ДАННЫЕ
+
+surface = feval(f,repmat(1:sizeTpg(2),sizeTpg(1),1),repmat(1:sizeTpg(1),sizeTpg(2),1)');
+
+% УДАЛЕНИЕ НАКЛОНА ИСХОДНОЙ ПОВЕРХНОСТИ
+
+tpgWithoutPolynomial5 = zeros(sizeTpg);
+tpgWithoutPolynomial5 = tpg - surface;
+tpgWithoutPolynomial5 = tpgWithoutPolynomial5 + abs(min(min(tpgWithoutPolynomial5)));
+% mask = zeros(size(tpg));
+% mask(tpg > ((max(tpg(:)) - min(tpg(:))) / 2)) = 1;
+% tpgWithoutPolynomial5 = tpgWithoutPolynomial5 .* mask;
 
 end
 

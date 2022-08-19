@@ -60,9 +60,6 @@ switch dimension
     c = colorbar;
     c.Label.String = '\Delta\phi, nm';
     c.Label.FontSize = fontSize;
-    if (exist('myColormap', 'var') ~= 1)
-      load('myColormap.mat');
-    end
     colormap('jet');
     %{
     if  (nargin > 1)
