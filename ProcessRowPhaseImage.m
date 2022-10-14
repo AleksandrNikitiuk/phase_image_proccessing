@@ -36,6 +36,8 @@ switch processType
     processTpg = DeleteBackground( DeletePhaseShifts(tpg) );
   case 'bsps' % удаление фазовых сдвигов, наклона поверхности и фона
     processTpg = DeleteBackground( DeleteSlope(DeletePhaseShifts(tpg)) );
+  case 'pbps' % удаление фазовых сдвигов, поверхности 5 порядка и фона
+    processTpg = DeleteParabolic( DeleteBackground(DeletePhaseShifts(tpg)) );
   case 'p5bps' % удаление фазовых сдвигов, поверхности 5 порядка и фона
     processTpg = DeletePolynomial5( DeleteBackground(DeletePhaseShifts(tpg)) );
   case 'bp5bps' % удаление фазовых сдвигов, поверхности 5 порядка и фона
