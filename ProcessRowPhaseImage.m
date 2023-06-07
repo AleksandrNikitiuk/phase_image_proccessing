@@ -231,7 +231,7 @@ function [ phaseImageWithoutNoise ] = DeleteBackground( phaseImage,countourLevel
 % йнмрпнкэ бундмшу дюммшу
 
 if (nargin < 2)
-  countourLevel = 2;
+  countourLevel = 1;
 end
 
 % бшдекемхе тюгнбнцн хгнапюфемхъ йкерйх

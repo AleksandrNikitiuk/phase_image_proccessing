@@ -32,7 +32,7 @@ fontWeight = 'normal';
 box on;
 
 % Labels
-%
+%{
 xLabel = 'log(t)';
 xlabel(xLabel);
 yLabel = 'log(F)';

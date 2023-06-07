@@ -25,7 +25,7 @@ xLabel = 'x';
 yLabel = 'y';
 
 if ( strcmp(type,'tpg') == 1)
-  pxlSize = 0.136950136950137;
+  pxlSize = 0.055650834762521; % 0.136950136950137
   dimCoef = [pxlSize pxlSize];
   xLabel = 'x, \mum';
   yLabel = 'y, \mum';
